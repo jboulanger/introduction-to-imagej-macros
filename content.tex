@@ -1,0 +1,907 @@
+%\documentclass[9pt,twocolumn,colorlinks=true,linkcolor=black,urlcolor=skyblue1,a4paper]{scrartcl}
+%\usepackage{beamerarticle}
+%\documentclass[ignorenonframetext]{beamer}
+\usepackage{xltxtra}
+\usepackage{amssymb, amsmath, mathtools, amsthm}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\defaultfontfeatures{Mapping=tex-text}
+\setmainfont{Ubuntu} % Main document font
+\definecolor{skyblue1}{RGB}{114,159,207}
+\definecolor{plum1}{RGB}{173,127,168}
+\definecolor{chameleon1}{RGB}{78,154,6}
+\definecolor{chocolate1}{RGB}{193,125,17}
+\definecolor{comments}{RGB}{78,154,6}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\mode<presentation> {
+  \usetheme{Pittsburgh}
+  \setbeamercolor{normal text}{fg=black!60!white}
+  \setbeamercolor{framesubtitle}{fg=black!50!white}
+  \setbeamercolor{title}{fg=plum1}
+  %\setbeamercolor{block title example}{fg=chocolate1}
+  \setbeamercolor{structure}{fg=skyblue1}
+  \beamertemplateshadingbackground{black!20!white}{white}
+  \usefonttheme{structurebold}
+  \beamertemplatenavigationsymbolsempty
+  \setbeamertemplate{footline}[frame number]
+  \defbeamertemplate*{title page}{customized}[1][] {
+    \flushright
+    \usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par
+    \usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par
+    \bigskip
+    \usebeamerfont{author}\usebeamercolor[fg]{normal text}\insertauthor\par
+    \usebeamerfont{institute}\insertinstitute\par
+    \usebeamerfont{date}\insertdate\par
+    \usebeamercolor[fg]{titlegraphic}\inserttitlegraphic
+  }
+}
+
+
+\usepackage{hyperref}
+
+\usepackage{listings}
+\lstset{ backgroundcolor=\color{yellow!10!white}, basicstyle=\footnotesize,
+  breakatwhitespace=false, breaklines=true,
+  captionpos=t, commentstyle=\color{comments},
+  deletekeywords={...}, escapeinside={\%*}{*)},
+  extendedchars=true, frame=none,
+  keepspaces=true, keywordstyle=\color{blue},
+  language=Java, otherkeywords={macro,function},
+  numbers=none, numbersep=5pt,  numberstyle=\tiny\color{mygray},
+  rulecolor=\color{black},  showspaces=false, showstringspaces=false,
+  showtabs=false,  stepnumber=2,  stringstyle=\color{mymauve},
+  tabsize=2,  title=\lstname, abovecaptionskip=0cm,belowcaptionskip=0cm
+}
+
+\only<presentation>{\lstset{basicstyle=\tiny}}
+
+\usepackage{menukeys}
+
+\usepackage{tikz}
+\usetikzlibrary{calc,shapes,positioning}
+
+\newcommand{\kw}[1]{\textcolor{orange}{\textbf{#1}}}
+\newcommand{\code}[1] {\textcolor{gray}{\texttt{#1}}}
+%\newtheorem{example}{Example:}
+\setcounter{tocdepth}{1}
+\title{Introduction to ImageJ Macros}
+\author{J\'er\^ome Boulanger}
+\date{}
+\begin{document}
+\begin{frame}
+  \maketitle
+\end{frame}
+
+\begin{frame}<presentation>
+  \mode<presentation>{\frametitle{Outline}}
+  \tiny \tableofcontents
+\end{frame}
+
+\section{Introduction}
+\begin{frame}
+  \frametitle<presentation>{Introduction}
+  The aim of this \only<presentation>{lecture}\only<article>{document} is to
+  \begin{itemize}
+  \item become more familiar with programming
+  \item be able to automatize repetitive tasks
+  \item learn how to batch process files
+  \item enable more quantitative analysis of micoscopy images.
+  \end{itemize}
+  Where to get help?
+  \begin{itemize}
+  \item \url{http://imagej.nih.gov}
+  \item \url{http://fiji.sc}
+  \item \url{http://cmci.embl.de/documents/ijcourses}
+  \end{itemize}
+\end{frame}
+
+You will find a detailed reference on ImageJ built-in macro function
+\href{http://rsb.info.nih.gov/ij/developer/macro/functions.html}{here}. In
+several places of this document you will find direct entry to sections
+of this page.
+
+\begin{frame}
+  \frametitle{But why the ImageJ macro language?}
+  \begin{itemize}
+  \item ImageJ is a widespread tool in the community.
+  \item Macro language allows you to go beyond the clicking around.
+  \item Even if in the future you don't use ImageJ macro programming
+    language you will learn some basic programming techniques.
+  \item The macro language do not require a full knowledge of the
+    underlying ImageJ code (classes).
+  \item You may decide to continue later to script using Python,
+    BeanShell, Clojure or Javascript to be able to perform more
+    advanced scripts.
+  \end{itemize}
+\end{frame}
+
+\section{Macro Basics}
+\subsection{Macro Basics}
+\begin{frame}[fragile]
+  \frametitle<presentation>{Macro basics}
+  \begin{itemize}
+  \item A \kw{macro} is a set of instruction that can be interpreted
+    by the the ImageJ macro interpreter (like in Python \& Basic unlike
+    C or Java).
+  \item It is stored in a text file (.ijm) (not a MS Word document).
+  \item A file can contain several macros and define a toolset.
+  \item \kw{Instructions} are terminated by a semi colon ``;'' and can
+    be grouped inside a pair of curly braces.
+  \item Instruction starting with \verb$//$ or between \verb$/* */$
+    are \kw{comments} (not interpreted).
+  \item You can create and edit macros from the macro editor
+    \menu{File > New > Script} or press \keys{\{}).
+  \item To be able to install a macro you need to use the syntax:
+    \begin{minipage}{5cm}
+      \verb$   macro "name [shortcut]" { instructions; } $
+    \end{minipage}
+  \item You can discard this syntax for testing quickly pieces of code.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \begin{example}[Hello World]~\par
+  \begin{itemize}
+  \item Let's open macro editor and select \menu{Language > IJ1 Macro}.
+  \item We can write down our first macro:\par
+    \lstinputlisting[firstline=3]{macros/mac1.ijm}
+  \item Identify the macro name, the instruction and the curly baces around it.
+  \item Test the macro using \keys{Run} or \keys{Ctrl+R}
+  \item We are now ready to save the macro \menu{File > Save}.
+  \item We can also install it using \menu{Plugin > Macro >
+      Install\dots} from the main user interface.
+  \end{itemize}
+\end{example}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle<presentation>{Keep it tidy!}
+  \begin{itemize}
+  \item Obviously you don't need the code to look pretty to be
+    functional and this code can be executed:\par
+    \lstinputlisting[firstline=3]{macros/mac2.ijm}
+  \item But for your own sake (in 3 month you'll have forgotten what it does), use:
+    \begin{itemize}
+    \item spaces around variables : \verb?i = i + 10? instead of \verb?i=i+10?.
+    \item space after a comma \verb?z = doSomething(x, y)?
+    \item increment the tabulation number after opening a curly braces \verb?{?
+    \item split the code into reusable blocks.
+    \item use consistent and explicit names for variables and functions
+    \item use the lowerCamelCase function naming convention (as used by the IJ macro language).
+    \item document the code using  \textcolor{green!50!black}{/*comments*/}.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Macro recorder}
+  \begin{itemize}
+  \item You can record actions using \menu{Plugins > Macros > Record \dots}.
+  \item Let's try to segment an image and measure intensities in the
+    regions of interest defined by the mask:
+    \begin{enumerate}
+    \item Open the sample blobs.gif \menu{File > Open Sample > Blobs [25K]}
+    \item Duplicate the image \menu{Image > Duplicate}
+    \item Apply a median filter to the new image \menu{Process > Filters > Median \dots} with radius 2.
+    \item Threshold this image using the auto-threshold \menu{Image > Adjust > Auto threshold}
+    \item Apply a watershed to split regions \menu{Process > Binary > Watershed}
+    \item Define some regions using \menu{Analyse > Analyse Particles} and tick the add to ROI manager box.
+    \item Close the mask window (blobs-1.gif) and select the original one.
+    \item Un-select \& re-select ``View all'' in the ROI manager and click Measure.
+    \end{enumerate}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle<presentation>{Macro recorder}
+  \begin{itemize}
+  \item By clicking on \keys{Create} button, we obtain the following
+    macro:\par
+    \lstinputlisting[firstline=3]{macros/mac3.ijm}
+  \item Identify the 4 functions used in this code.
+  \item How can we make this code more general in order to apply it to
+    another image?
+  \end{itemize}
+\end{frame}
+
+\section{Building blocks}
+A programming language is defined by its syntax. We describe some
+elements of it in this section. ImageJ Macro language is a interpreted
+procedurale language whose syntaxe is close to e.g.: C, Java or
+Javascript.
+\subsection{Variable \& Operations}
+\begin{frame}
+  \frametitle<presentation>{Variables \& Operations}
+  \begin{block}{Variables}
+    \begin{itemize}
+    \item A \kw{variable} is a symbolic representation associated to a value.
+    \item They can be of serveral \kw{type}: number, string or boolean.
+    \item They have no explicite type (like in Python, unlike C or Java).
+    \item When not first declared in a function they are \kw{global}.
+    \item You can \kw{assign} a value to a variable using operator \code{=}.
+    \item You can print the value of a variable using \code{print();}
+    \end{itemize}
+  \end{block}\only<presentation>{\vspace{-.3cm}}
+  \begin{block}{Operations}
+    \begin{itemize}
+    \item Usual operations on number are valid (\code{+},\code{-},\code{*},\code{/}).
+    \item Operation on boolean are the logical ``and'' \code{\&\&} and ``or''  \code{||}.
+    \item \kw{Comparison} on variable are the equality \code{==},
+      the non-equality \code{!=}, greater and equal than \code{>=}
+      lower and equal then \code{<=} and their respective strict
+      version \code{>} and \code{<}. Their result is a boolean.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \begin{example}[Operations on number \& boolean.]~\par
+    \lstinputlisting[firstline=3]{macros/mac4.ijm}
+  \end{example}
+\end{frame}
+
+\subsection{Conditional Branching}
+\begin{frame}[fragile]
+  \frametitle<presentation>{Conditional branching}
+  \begin{itemize}
+  \item A \kw{condition} is a boolean and a section of code
+    can be interpreted or not depending on whether it is
+    \textcolor{blue}{true} or \textcolor{blue}{false}.
+  \item The syntax is
+\begin{verbatim}
+if (conditionA) {
+  instructionA;
+} else if (conditionB) {
+  instructionB;
+} else {
+  instructionC;
+}
+\end{verbatim}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{example}[Conditional branching]~\par
+
+    \lstinputlisting[firstline=3]{macros/mac5.ijm}
+  \end{example}
+\end{frame}
+
+\subsection{Loops}
+\begin{frame}[fragile]
+  \frametitle<presentation>{Loops}
+  \begin{itemize}
+  \item There are 3 sort of \kw{loops}:
+    \begin{enumerate}
+    \item the \kw{for} loop:
+      \begin{verbatim}
+for (initialization; condition; increment) {
+   instruction;
+}
+    \end{verbatim}
+    \item the \kw{while} loop:
+      \begin{verbatim}
+while (condition) {
+   instruction;
+}
+    \end{verbatim}
+    \item the \kw{do-while} loop:
+      \begin{verbatim}
+do {
+   instruction;
+} while (condition);
+    \end{verbatim}
+    \end{enumerate}
+  \item The syntax \code{i++;} is equivalent to \code{i = i + 1;} and
+    allows to increment a variable by 1.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{example}[Loops]~\par
+    \lstinputlisting[firstline=3]{macros/mac6.ijm}
+  \end{example}
+\end{frame}
+
+\subsection{Arrays}
+\begin{frame}[fragile]
+  \frametitle<presentation>{Arrays}
+  \begin{itemize}
+  \item Arrays are list of values stored in a single variable,
+    \begin{center}
+      \begin{tikzpicture}[minimum size=.75cm, draw]
+        \node[shape=circle,draw] (A) at (-1,0) {A};
+        \node[shape=rectangle,draw] (a0) at (0,0) {132};
+        \node[red!70!black,below of = a0,node distance=.75cm,draw] (i0) {\small 0};
+        \draw (A) -- (a0);
+        \node[shape=rectangle,draw, right of = a0] (a1) {13};
+        \node[red!70!black,below of = a1,node distance=.75cm,draw] (i1) {\small 1};
+        \draw (a0) -- (a1);
+        \node[shape=rectangle,draw, right of = a1] (a2) {17};
+        \node[red!70!black,below of = a2,node distance=.75cm,draw] (i2) {\small 2};
+        \draw (a1) -- (a2);
+        \node[shape=rectangle,draw, right of = a2] (a3) {36};
+        \node[red!70!black,below of = a3,node distance=.75cm,draw] (i3) {\small 3};
+        \draw (a2) -- (a3);
+        \node[gray, right of = a3, node distance=1.5cm] (c1) {value};
+        \draw[gray,->] (c1) -- (a3);
+        \node[gray, right of = i3, node distance=1.5cm] (c2) {index};
+        \draw[gray,->] (c2) -- (i3);
+      \end{tikzpicture}
+    \end{center}
+  \item created using the syntax \code{a = newArray(size);}
+  \item indexed with a integer running from \code{0} to \code{a.length-1}.
+  \item calling \code{a[i]} return the value stored at index \code{i}.
+  \item initialize an array with values using
+    \begin{center}
+      \code{a = newArray(value1, value2, value3);}
+    \end{center}
+  \item concatenate two arrays using:
+    \begin{center}
+      \code{array3 = Array.concat(array1, array2);}
+    \end{center}
+  \item print the values using \code{Array.print(a);}
+  \item copy the values \code{a = Array.copy(a);}
+  \item sort the values of the array \code{Array.sort(a);}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{example}[Loops \& arrays]~\par
+    \begin{itemize}
+    \item  In this example, we use a loop over an array of strings.
+      \lstinputlisting[firstline=3]{macros/mac7.ijm}
+    \item Modify this example to greet the team in alphabetical order.
+    \end{itemize}
+  \end{example}
+\end{frame}
+
+\subsection{Functions}
+\begin{frame}[fragile]
+  \frametitle<presentation>{Functions}
+  \begin{itemize}
+  \item \kw{Functions} are a set of commands with optionally some
+    \kw{input parameters} and a \kw{return value}.
+  \item Lots of function are already declared (eg example \code{print()})
+  \item Mathematical functions (\code{sqrt()}, \code{exp()}, \code{log()}, \code{sin()}, \dots) are avaiblable on numbers.
+  \item The syntax to declare your \kw{own} functions is the following:
+\begin{verbatim}
+function functionName (parameters1, parameter2) {
+  instructions;
+  return output;
+}
+\end{verbatim}
+  \item Function can not be called from another file
+    except the one located in \code{ImageJ/macros/Library.txt}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{example}[Function]~\par
+    Let's modify the previous example with a ``greet'' function:\par
+    \lstinputlisting[firstline=3]{macros/mac8.ijm}
+  \end{example}
+\end{frame}
+
+\begin{frame}
+  \begin{example}[Median value]~\par
+    \begin{itemize}
+    \item Let's now define a function computing the median value of an array.\par
+      \lstinputlisting[firstline=3]{macros/mac9.ijm}
+    \item Write an example to test this function (create an array and print its median value).
+    \end{itemize}
+
+  \end{example}
+\end{frame}
+
+\begin{frame}
+  \begin{example}[Median of pixel values]~\par
+    \begin{itemize}
+    \item In this example, we define a function going through the pixel
+      values of the image and fill an array.
+    \item An array is 1D (one index) while the image has at least 2D
+      (two indexes), we then have to unroll the pixels in 1D.
+      \lstinputlisting[firstline=3]{macros/mac10.ijm}
+    \item We can note already the two functions \code{getHeight} and
+      \code{getWidth} used to get the image dimensions as well as the
+      function \code{getPixel(x, y)} to read the pixel value.
+    \item Combine the two last examples to compute the median value of
+      the pixel of the image.
+    \end{itemize}
+  \end{example}
+\end{frame}
+
+\section{Strings}
+\subsection{Definition}
+\begin{frame}[fragile]
+  \frametitle<presentation>{String}
+  \begin{itemize}
+  \item A \kw{string} is a sequence of characters it can be a
+    filename, a window name, a message on log window, metadata.
+  \item Defined by \kw{double quotes}: \code{str = "i am a string"}.
+  \item The length of a string is given by \code{lengthOf(string);}
+  \item Concatenatenation is done using the operator \code{+} (cf previous example).
+    \begin{itemize}
+    \item Note that \code{str = 1+" this is a string";} produces an error.
+    \item It is necessary to start using an empty string: \code{str = ""+1+" this is a string";}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\subsection{Formating \& Printing}
+\begin{frame}[fragile]
+  \frametitle<presentation>{Formating}
+  \begin{itemize}
+  \item \code{d2s(number, decimals)} converts a real to a string.
+  \item \code{IJ.pad(number, size);} convert an integer to a string with zero-padding.
+  \item The function \code{print(string);} prints the string in the log window.
+  \item The function \code{print("\textbackslash\textbackslash Clear");} clears the log window.
+  \item The special character \code{"\textbackslash n"} defines a carriage return (line break).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \begin{example}[String formating]~\par
+    \begin{itemize}
+    \item In this example we experiment with the different formating
+      functions.~\par
+      \lstinputlisting[firstline=3]{macros/mac11.ijm}
+    \end{itemize}
+  \end{example}
+\end{frame}
+
+\subsection{Operations}
+\begin{frame}
+  \frametitle<presentation>{String manipulation}
+  \begin{itemize}
+  \item Extract a substring using \code{substring(string, index1,
+      index2)}. The indexes are between \code{0} and
+    \code{lengthOf(string)} and the resulting string is between
+    \code{index1} and \code{index2-1}.
+  \item \code{indexOf(string, substring)} and
+    \code{lastIndexOf(string, substring)} return the index where the
+    substring appears first and respectively last in the string.
+  \item \code{startsWith(string, prefix)} and \code{endsWith(string,
+      suffix)} test if a string starts / ends with the given prefix or
+    suffix.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \begin{example}[Append to filename]~\par
+    \begin{itemize}
+    \item In this example, we define a function to append a tag to the
+      filename in order for example to create a meaningfull output
+      filename.~\par
+      \lstinputlisting[firstline=3]{macros/mac12.ijm}
+    \end{itemize}
+  \end{example}
+\end{frame}
+
+\begin{frame}[fragile]
+  \begin{example}[Path name manipulation]~\par
+    \begin{itemize}
+    \item Let's define two functions returning the basename and the
+      dirname of a path.~\par
+      \lstinputlisting[firstline=3]{macros/mac13.ijm}
+    \end{itemize}
+  \end{example}
+\end{frame}
+
+\subsection{Regular expressions}
+\begin{frame}[fragile]
+  \frametitle<presentation>{Regular expressions}
+  \begin{itemize}
+  \item  A \kw{regular
+      expression} describes a pattern.
+    \begin{itemize}
+    \item \verb?^? matches the start
+    \item \$ the end
+    \item . any characters
+    \item * any number of time
+    \item the brackets [~] allows to specify a range of characters eg:
+      [0-9] are numbers [a-zA-Z] letters.
+    \end{itemize}
+  \item To match the characters \verb?^?, \$, ., [, ] and * you need to
+    ``escape'' them using a backslash \verb?\?.
+  \item \code{matches(string, regex)} returns \textcolor{blue}{true}
+    if the string matches the regular expression.
+  \item \code{replace(string, old, new)} allows to replace the string
+    \code{old} by \code{new} in the string. Again regular expression
+    can be used.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{example}[String filtering]~\par
+    \begin{itemize}
+    \item In this example, we define a function to keep only elements
+      in an array matching a certain pattern.\par
+      \lstinputlisting[firstline=3]{macros/mac14.ijm}
+    \item Modify this code to keep only the first time point.
+    \end{itemize}
+  \end{example}
+\end{frame}
+
+\section{User interaction}
+\begin{frame}[fragile]
+  \frametitle<presentation>{User Interaction (1/3)}
+  \begin{itemize}
+  \item The simplest way to request information from a user is to use
+    the functions \code{getString()}, \code{getNumber()},
+    \code{getDirectory()} and \code{File.openDialog()}.\par
+    \lstinputlisting[firstline=3]{macros/mac15.ijm}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle<presentation>{User Interaction (2/3)}
+  \begin{itemize}
+  \item To have all parameters on a single user interface we can
+    call \code{Dialog.create("title'');}, adding to it several elements
+    using \code{Dialog.add\dots}, display it using
+    \code{Dialog.show();} and finally get the values using
+    \code{Dialog.get\dots} in the matching order.\par
+    \lstinputlisting[firstline=3]{macros/mac16.ijm}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle<presentation>{User Interaction (3/3)}
+  \begin{itemize}
+  \item A very simple way to ask for parameters is to use annotations
+    using the \code{@} symbol in the first lines of the file.\par
+    \lstinputlisting[firstline=3]{macros/mac17.ijm}
+
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle<presentation>{User interaction}
+  \begin{itemize}
+  \item You can ask the user to perform a task and wait that this task is
+    completed by using the built-in macro command \code{waitForUser(string)}:
+    \lstinputlisting[firstline=3]{macros/mac18.ijm}
+  \item It is often recommended to separate the user interaction from
+    the actual processing.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \begin{example}[Adding parameters]~\par
+    \begin{itemize}
+    \item Modify the macro mac3.ijm to add 3 parameters (filename, radius,
+      object area) using the 1st and 2nd approach.
+    \end{itemize}
+    \lstinputlisting[firstline=3]{macros/mac19.ijm}
+  \end{example}
+\end{frame}
+
+\section{Images \& Windows}
+\begin{frame}
+  \frametitle{Images \& Windows}
+  \begin{itemize}
+  \item \code{newImage(title, type, width, height, depth)} creates a new
+    image. Where the type can be "8-bit", "16-bit", "32-bit" or
+    "RGB". It can also contain the parameters “white", "black" or
+    "ramp" as a filling value.
+  \item During the execution of a macro you can \code{setBatchMode(true)} to
+    hide the images during the processing. The execution is then up to
+    20 times faster. \code{setBatchMode(false)} at the end of the script
+    displays the active image and deletes the other ones.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Images \& Windows}
+  \begin{itemize}
+  \item To identify a image/window you can use its identifier using
+    \code{getImageID()} or its title with \code{getTitle()}.
+  \item You can later set the focus on this image/window using
+    \code{selectImage(id)} or \code{selectWindow(name)}.
+  \item \code{nImages()} returns the number of opened images.
+  \item There is no list of opened images and IDs are negative
+    integers (hard to loop over images).
+  \item \code{rename(string)} renames a window (eg to set an informative name
+    to the image generated by a macro).
+  \item \code{run("Duplicate...", string);} with string being an informative
+    name, you would probably reduce the need of renaming images.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \begin{example}[Using image identifier]~\par
+    \begin{itemize}
+    \item Modify the macro mac16.ijm using \code{getImageID()}.
+    \item Make a function of this code and test it on blob.gif.
+    \end{itemize}
+    \lstinputlisting[firstline=3]{macros/mac20.ijm}
+  \end{example}
+\end{frame}
+
+\section{File \& Directories}
+Reference information on files is located
+\href{http://rsb.info.nih.gov/ij/developer/macro/functions.html#file}{here}.
+\begin{frame}
+  \frametitle<presentation>{File \& Directories}
+  \begin{itemize}
+  \item \code{open(path)} opens an image, a ROI or a text file.
+  \item To list the files in a directory you can use the function
+    \code{list = getFileList(myDir);} which return an array of
+    filenames (strings) located in the folder myDir. It is then
+    possible to loop over the items in the array.
+  \item Looping over files in a directory will allow you to perform
+    batch processing.  However, there exist a set of tools performing
+    simple batch processing in the \menu{Process > Batch}. You can
+    then write a script for an image and apply it to a set of files in
+    given a folder.
+  \item To handle both MS Windows and Mac OS/Unix path names, use
+    \code{path = folder\_name + File.separator + filename;}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{example}[Folder batch processing]~\par
+    \begin{itemize}
+    \item Let's try to reproduce the \menu{Process > Batch \dots} functionnality.
+      \lstinputlisting[firstline=3]{macros/mac21.ijm}
+    \end{itemize}
+  \end{example}
+\end{frame}
+
+\begin{frame}
+  \frametitle<presentation>{Bio-format}
+  \begin{itemize}
+  \item To open images using BioFormat you can make use of the
+    BioFormat Macro extension. You may call the plugin to have
+    informations on these extensions.
+  \item<article> References on the bio-format extention is
+    \href{https://www.openmicroscopy.org/site/support/bio-formats5.1/users/imagej/}{here}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{example}[Using Bioformat]~\par
+    \begin{itemize}
+    \item This macro prints very basic metadata
+      \lstinputlisting[firstline=3]{macros/mac22.ijm}
+    \end{itemize}
+  \end{example}
+\end{frame}
+
+\section{Stack \& Hyper-stacks}
+\begin{frame}[fragile]
+  \frametitle<presentation>{Stacks}
+  \begin{itemize}
+  \item Indexes for z (slices), c (channels) and t (frames) start at \kw{1}.
+  \item \code{N = nSlice();} returns the total number of planes.
+  \item \code{setSlice(n);} sets the cursor at slice \code{n}.
+  \item A loop on Z-planes is then:\par
+    \lstinputlisting[firstline=3]{macros/mac23.ijm}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle<presentation>{Hyper-stacks}
+  \begin{itemize}
+  \item The 5D-dimensions of an hyper-stack can be determined using:
+    \code{getDimensions(width, height, channels, slices, frames);}. It
+    will assigns the variables width .. frames to the corresponding
+    values.
+  \item Use \code{Stack.setChannel(c)}, \code{Stack.setSlice(z)},
+    \code{Stack.setFrame(t)} or directly
+    \code{Stack.setPosition(c,z,t);} to set the position in the
+    hyper-stack.
+  \end{itemize}
+\end{frame}
+
+\section{ROI Manager}
+Reference information on ROI is located
+\href{http://rsb.info.nih.gov/ij/developer/macro/functions.html#Roi}{here}.
+\begin{frame}[fragile]
+  \frametitle<presentation>{ROI manager}
+  \begin{itemize}
+   \item You can interact with the ROI Manager using the function
+     \code{roiManager(cmd);} where \code{cmd} can be "Add", "Add \&
+     Draw", "Update", "Delete", "Deselect", "Measure", "Draw", "Fill",
+     "Label", "Combine", "Split", "Sort", "Reset", "Multi Measure",
+     "AND", "OR", "Multi Plot", "Show All", "Show None", "Show all with
+     labels", "Show all without labels" or "Remove Slice Info".
+   \item The ROI manager runs faster in batch mode. In a macro start
+     by closing the Roi Manager:
+     \lstinputlisting{macros/mac24.ijm}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle<presentation>{ROI selection}
+  \begin{itemize}
+  \item The number of ROI is given by \code{N = roiManager("count");}
+  \item the index of the current ROI is given by \code{index = roiManager("index");}
+  \item you can select several ROI using \code{roiManager("select", indexes);} where indexes is an array.
+     \item Indexes are between 0 and N.
+     \item For example to loop over the ROI and print their type, we
+       can use the following macro:\par
+       \lstinputlisting[firstline=3]{macros/mac25.ijm}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle<presentation>{ROI Measures}
+  \begin{itemize}
+  \item Once ROI are defined we can measure quantities such as mean,
+    min, max, centroid position etc.
+  \item To get the name of the possible measurement make a small test
+    ticking the desired measurements in the \menu{Analyze > Set
+      Measurements} dialog.
+  \item Using a macro, you can define quantities for the ROIs that are not
+    available from the standard measurement.
+  \item A good idea is to use \code{List.setMeasurements} and
+    \code{List.getValue();} that can achieve more than the
+    \code{getStatistics(area, mean, min, max, std, histogram)} function (\href{http://rsb.info.nih.gov/ij/developer/macro/functions.html#getStatistics}{ref}).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \begin{example}[Measurements]~\par
+    \begin{itemize}
+    \item Create/Open an image and draw some ROIs.
+    \item Use the following macro to messure the centroid of the ROIs:\par
+      \lstinputlisting[firstline=3]{macros/mac26.ijm}
+    \item Add some more measurements to the table by editing the macro.
+    \end{itemize}
+  \end{example}
+\end{frame}
+
+\section{Overlays}
+You will find references on overlays
+\href{http://rsb.info.nih.gov/ij/developer/macro/functions.html#Overlay}{here}.
+\begin{frame} \frametitle<presentation>{Overlays}
+  \begin{itemize}
+  \item Non destructive overlays allows to add annotations on the
+    image.
+  \item They can be saved in the TIFF file.
+  \item Basic drawing functions are
+    \begin{itemize}
+    \item \code{Overlay.drawLine(x0, y0, x1, y1);} to draw a line
+    \item \code{Overlay.drawEllipse(x0, y0, x1, y1);} to draw an ellipse
+    \item \code{Overlay.drawString(text, x,y);} to draw some text
+    \end{itemize}
+  \item \only<article>{You can use}\code{ run("Add Selection...",
+      "stroke=red width=2");}\only<article>{to} converts a selection
+    to an overlay.
+  \item Before adding overlays, one can clear the current overlays
+    using \code{Overlay.remove;}.
+  \item Once the overlay are drawn they might not be visible as one
+    need to refresh the display using \code{Overlay.show();}
+  \item When the image is a stack, one can specify the position of the
+    overlay using \code{Overlay.setPosition(i);}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \begin{example}[Add a scale bar and timer]~\par
+    \begin{itemize}
+    \item In this example, we want to add a timer and a scale bar to
+      all frames of the image stack.
+       \only<presentation>{\lstinputlisting[lastline=18]{macros/mac27.ijm}}
+       \only<article>{\lstinputlisting{macros/mac27.ijm}}
+    \end{itemize}
+  \end{example}
+\end{frame}
+
+\begin{frame}<presentation>
+  \frametitle{Examples}
+  \begin{itemize}
+  \item Cell velocity
+  \item Deconvolution
+  \item ROIs Overlap analysis
+  \item ROIs distance
+  \item Cell divisions
+  \end{itemize}
+\end{frame}
+
+\only<article>{
+  \section{Examples}
+  \subsection{Cell velocity}
+  This example relies on many of the previous example encountered
+  along this short tutorial. It aims at segmenting a single cell
+  moving across the field of view and measuring its speed.\par
+
+  \lstinputlisting{macros/Track_Cell.ijm}
+
+  One possible extention to this example would be to compute the mean
+  squared displacement $<d^2(t)>$ from the track and estimate the
+  persistence time $P$ using the F\"urth formula in 2D given by:
+  $$<d^2(\tau)> = 4D \left(\tau-P\left(1-e^{-\tau/P}\right)\right)$$
+  where $t$ is the lag-time and $D$ the diffusion coefficient. The
+  mean squared displacement is computed from the averaged squared
+  distance of between point located at time $t$ and and $t+\tau$ for
+  all time point $t$.
+  \subsection{Deconvolution}
+  In this example, we implement the Gold deconvolution algorithm. It
+  is an iterative algorithm which at each iteration $k$ from an input
+  image $f$ estimates the deblured image $u_k$ as:
+  $$ u_k = u_{k-1} \cdot \frac{f}{h \ast u_{k-1}} $$
+  where $h \ast u_{k-1}$ represent the bluring of the image
+  $u_{k-1}$. The algorithm can be then decomposed as:
+  \begin{enumerate}
+  \item compute $h \ast u_{k-1}$ as a new image
+  \item divide $f$ by the result of the previous operation as a new image
+  \item multiply the previous estimtate by this ratio
+  \item close the ratio image
+  \item go to step 1
+  \end{enumerate}
+  In this example we also illustrate the \code{appendToFilename()}
+  function we have seen before.\par
+ \lstinputlisting{macros/Gold_Deblur3D.ijm}
+ \subsection{ROIs Overlap analysis}
+ In this example, we count the number of regions in one channel
+ which are contained in region defined in another channel:
+ \begin{figure}[h]
+   \begin{center}
+     \begin{tikzpicture}
+       \draw[red] (0,0) circle (1);
+       \draw[red] (3,1) circle (1.3);
+       \draw[green!75!black] (.5,.5) circle (.1);
+       \draw[green!75!black] (.5,.1) circle (.1);
+       \draw[green!75!black] (.1,.2) circle (.1);
+       \draw[green!75!black] (.75,2) circle (.1);
+       \draw[green!75!black] (3,.5) circle (.1);
+       \draw[green!75!black] (4,.5) circle (.1);
+     \end{tikzpicture}
+   \end{center}
+ \end{figure}
+ The distinction between the two type of ROIs is based on the
+ associated channels which is encoded in their name when using
+ hyper-stacks.
+
+ An extension of this macro could be to measure quantities in the
+ green regions and compare the resulting values as a function of their
+ localisation inside a red region.
+
+ \lstinputlisting{macros/ROI_Overlap.ijm}
+ \subsection{ROIs distance}
+ In this example, we want to compute the distance between each green
+ region to the closest red region:
+ \begin{figure}[h]
+   \begin{center}
+     \begin{tikzpicture}
+       \draw[red] (0,0) circle (1);
+       \draw[red] (3,1) rectangle (1.3,2);
+       \draw[green!75!black] (.5,.5) circle (.1);
+       \draw[green!75!black] (.5,1.2) circle (.1);
+       \draw[green!75!black] (-1.1,-1) circle (.1);
+       \draw[green!75!black] (.75,2) circle (.1);
+       \draw[green!75!black] (3,.5) circle (.1);
+       \draw[green!75!black] (4,.5) circle (.1);
+     \end{tikzpicture}
+   \end{center}
+ \end{figure}
+ In order to achieve this, we compute a distance map from the set of
+ red regions and compute the minimum value of this distance map in the
+ green regions. Again the distinction between the two type of ROIs is
+ based on the associated channels which is encoded in their name when
+ using hyper-stacks.
+
+ \lstinputlisting{macros/ROI_Distances.ijm}
+\subsection{Cell divisions}
+This example contains two macros for the analysis of an image sequence
+monitoring cell division.
+
+In the macro ``count'', we count the number of cell in file located in
+a folder. We then plot the number of cells versus the time and try to
+estimate a cell division time.
+
+In the macro ``Classify Cells'', the cells are classify according to
+some measurements. A threshold for each measurement is computed and
+the ROI of the cells satisfying all the criterion will be drawn in
+red.
+
+\lstinputlisting{macros/MitoQuant.ijm}
+
+} % \only<article>
+\end{document}
