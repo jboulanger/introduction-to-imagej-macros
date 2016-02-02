@@ -15,5 +15,5 @@ for (i = 0; i < N; i++) {
 i = 0; // initialization
 while (i < N) {
 	print(i);
-	i = i + 1; // try to comment this line :-/
+	i = i + 1; // try to comment out this line :-/
 }
