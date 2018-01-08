@@ -4,7 +4,7 @@ run("Bio-Formats Macro Extensions");
 id = File.openDialog("Choose a file");
 Ext.setId(id);
 Ext.getSeriesCount(seriesCount);
-for (s=0; s<seriesCount; s++) {
+for (s = 0; s < seriesCount; s++) {
   Ext.setSeries(s);
   Ext.getSizeX(sizeX);
   Ext.getSizeY(sizeY);

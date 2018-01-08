@@ -13,7 +13,7 @@ macro "Distance to ROI" {
 	}
 	
 	// Get user input
-	Dialog.create("Deblur");
+	Dialog.create("ROI Distance");
 	Dialog.addNumber("Reference channel", 1);
 	Dialog.addNumber("Object channel", 2);
 	Dialog.show();

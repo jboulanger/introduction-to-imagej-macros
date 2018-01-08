@@ -2,7 +2,7 @@
 
 segmentCell(3, 5);
 
-// Segement the cell and add regions to ROI manager
+// Segment the cell and add regions to ROI manager
 function segmentCell(radius, area) {
 	id = getImageID();
 	run("Duplicate...", " ");

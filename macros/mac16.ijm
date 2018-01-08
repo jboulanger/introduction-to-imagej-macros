@@ -8,9 +8,9 @@
  Dialog.addCheckbox("Ramp", true);
  Dialog.show();
  title = Dialog.getString();
+ type = Dialog.getChoice();
  width = Dialog.getNumber();
  height = Dialog.getNumber();
- type = Dialog.getChoice();
  ramp = Dialog.getCheckbox();
  if (ramp==true) type = type + " ramp";
  newImage(title, type, width, height, 1);

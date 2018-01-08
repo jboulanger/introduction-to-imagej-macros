@@ -374,6 +374,7 @@ function functionName (parameters1, parameter2) {
   return output;
 }
 \end{verbatim}
+  \item Integer, strings and boolean are passed by value and arrays are passed by reference.
   \item Function can not be called from another file
     except the one located in \code{ImageJ/macros/Library.txt}.
   \end{itemize}
@@ -554,7 +555,7 @@ function functionName (parameters1, parameter2) {
   \begin{itemize}
   \item A very simple way to ask for parameters is to use annotations
     using the \code{@} symbol in the first lines of the file.\par
-    \lstinputlisting[firstline=3]{macros/mac17.ijm}
+    \lstinputlisting{macros/mac17.ijm}
 
   \end{itemize}
 \end{frame}
@@ -763,7 +764,8 @@ You will find references on overlays
   \begin{itemize}
   \item Non destructive overlays allows to add annotations on the
     image.
-  \item They can be saved in the TIFF file.
+  \item They can be saved in the TIFF file or exported (Flatten) in
+    RGB jpg or PNG.
   \item Basic drawing functions are
     \begin{itemize}
     \item \code{Overlay.drawLine(x0, y0, x1, y1);} to draw a line
@@ -836,7 +838,7 @@ You will find references on overlays
   \item go to step 1
   \end{enumerate}
   In this example we also illustrate the \code{appendToFilename()}
-  function we have seen before.\par
+  function we have seen before. We can test this macro using a sample image such as \par
  \lstinputlisting{macros/Gold_Deblur3D.ijm}
  \subsection{ROIs Overlap analysis}
  In this example, we count the number of regions in one channel

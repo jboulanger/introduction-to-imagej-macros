@@ -16,7 +16,7 @@ macro "ROI Overlap" {
 	}
 	
 	// Get user input
-	Dialog.create("Deblur");
+	Dialog.create("ROI Overlap count");
 	Dialog.addNumber("Reference channel", 1);
 	Dialog.addNumber("Object channel", 2);
 	Dialog.show();

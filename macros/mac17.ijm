@@ -1,7 +1,8 @@
-//@File(label = "file") my_filename
-//@Double(label = "radius", value = 2) my_radius
-//@Integer(label = "iterations", value = 3) my_iterations
-//@OUTPUT String my_filename
+//@File(label = "file") name
+//@Double(label = "radius", value = 2) R
+//@Integer(label = "iterations", value = 3) N
+//@OUTPUT String output
 macro "Test parameter annotations" {
-	print("the file is '" + my_filename + "'\nradius is " + my_radius);
+	print("file:'" + name + "'\nradius: " + R);
+	output = "filter img:"+name+"w radius:"+R;
 }

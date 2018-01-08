@@ -4,16 +4,19 @@
  * Jerome Boulanger 2015
  */
 
-macro "Gold_Deblur3D" {	
+macro "Gold_Deblur3D" {
+	if (nImages() == 0) {
+		run("Confocal Series (2.2MB)");	
+	}
 	Dialog.create("Deblur");
 	Dialog.addNumber("Lateral blur (px):", 2);
 	Dialog.addNumber("Axial blur (px):", 2);
 	Dialog.addNumber("Number of iterations:", 3);
 	Dialog.show();
-	bl = Dialog.getNumber();
-	ba = Dialog.getNumber();
-	N = Dialog.getNumber();
-	gold_deblur(bl, bl, ba, N);
+	lateral = Dialog.getNumber();
+	axial = Dialog.getNumber();
+	number_of_iterations = Dialog.getNumber();
+	gold_deblur(lateral, lateral, axial, number_of_iterations);
 }
 
 // 3D debluring using a Gold Meinel algorithm.
