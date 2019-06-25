@@ -393,6 +393,7 @@ function functionName (parameters1, parameter2) {
     \item Let's now define a function computing the median value of an array.\par
       \lstinputlisting[firstline=3]{macros/mac9.ijm}
     \item Write an example to test this function (create an array and print its median value).
+    \item Observe the difference between the two version of the median function.
     \end{itemize}
 
   \end{example}
@@ -554,7 +555,7 @@ function functionName (parameters1, parameter2) {
   \frametitle<presentation>{User Interaction (3/3)}
   \begin{itemize}
   \item A very simple way to ask for parameters is to use annotations
-    using the \code{@} symbol in the first lines of the file.\par
+    using the \code{\#@} symbol in the first lines of the file.\par
     \lstinputlisting{macros/mac17.ijm}
 
   \end{itemize}
@@ -678,7 +679,7 @@ Reference information on files is located
   \frametitle<presentation>{Stacks}
   \begin{itemize}
   \item Indexes for z (slices), c (channels) and t (frames) start at \kw{1}.
-  \item \code{N = nSlice();} returns the total number of planes.
+  \item \code{N = nSlices();} returns the total number of planes.
   \item \code{setSlice(n);} sets the cursor at slice \code{n}.
   \item A loop on Z-planes is then:\par
     \lstinputlisting[firstline=3]{macros/mac23.ijm}
@@ -788,7 +789,7 @@ You will find references on overlays
   \begin{example}[Add a scale bar and timer]~\par
     \begin{itemize}
     \item In this example, we want to add a timer and a scale bar to
-      all frames of the image stack.
+      all frames of the image stack (You may want to use \code{getVoxelSize(width, height, depth, unit)} and \code{Stack.getFrameInterval()} to get the pixel size and time interval).
        \only<presentation>{\lstinputlisting[lastline=18]{macros/mac27.ijm}}
        \only<article>{\lstinputlisting{macros/mac27.ijm}}
     \end{itemize}
@@ -907,3 +908,9 @@ red.
 
 } % \only<article>
 \end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "handout"
+%%% TeX-engine: "xetex"
+%%% End:

@@ -3,7 +3,8 @@
 run("Blobs (25K)");
 run("Duplicate...", " ");
 run("Median...", "radius=2");
-run("Auto Threshold", "method=MaxEntropy white");
+setAutoThreshold("Otsu");
+run("Convert to Mask"); 
 run("Watershed");
 run("Analyze Particles...", "size=5-Infinity add");
 close();
