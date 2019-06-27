@@ -1,4 +1,6 @@
 /* 
+ *  ROI Distances
+ *  
  * Measure distances between ROIs in channels 2 to ROIs in channel 1.
  * The input is an 2D hyper-stack with ROIs already defined 
  * in the ROI Manager. The ROI have the 0000-0000-0000 name pattern.
@@ -6,7 +8,7 @@
  * Jerome Boulanger 2015 - 2019
  */
 
-macro "Distance to ROI" {		
+macro "ROI Distances" {		
 	if (nImages == 0) {
 		test();		
 	} else {	
@@ -22,8 +24,7 @@ macro "Distance to ROI" {
 		ra = getRoiInChannel(a);
 		rb = getRoiInChannel(b);
 		D = computeRoiDistances(ra, rb);
-		setBatchMode(false);
-		
+		setBatchMode(false);		
 		// save the distance in the results table	
 		for (i = 0; i  < D.length; i++) {
 			roiManager("select", rb[i]);		

@@ -6,72 +6,110 @@
  * The input is an 2D hyper-stack with ROIs already defined 
  * in the ROI Manager. The ROI have the 0000-0000-0000 name pattern.
  * 
+ * Jerome Boulanger 2015-2019
  */
 
 
-macro "ROI Overlap" {
-	
+macro "ROI Overlap" {	
 	if (nImages == 0) {
-		createTest();
+		test();
+	} else {			
+		// Get user input
+		Dialog.create("ROI Overlap count");
+		Dialog.addNumber("Reference channel", 1);
+		Dialog.addNumber("Object channel", 2);
+		Dialog.show();
+		a = Dialog.getNumber();
+		b = Dialog.getNumber();
+		
+		setBatchMode(true);	
+		A = getRoiInChannel(a);
+		B = getRoiInChannel(b);	
+		counts = countRoiOverlap(A, B);
+		setBatchMode(false);
+		
+		// save the distance in the results table	
+		for (i = 0; i  < A.length; i++) {
+			roiManager("select", A[i]);
+			setResult("ROI Index", i, A[i]);
+			setResult("ROI Name", i, Roi.getName);
+			setResult("Number", i, counts[i]);
+		}
+		updateResults();
 	}
+}
+
+
+// create a test example
+function test() {
+	print("Testing mode");
+	//close windows
+	wins = newArray("ROI Manager","Results");
+	for (i = 0; i<wins.length;i++) {
+		if (isOpen(wins[i])) {
+			selectWindow(wins[i]);
+			run("Close");
+		}
+	}
+	newImage("HyperStack", "8-bit color-mode", 400, 300, 2, 1, 1);
+	makeOval(44, 38, 133, 143);
+	Roi.setStrokeColor("red");
+	roiManager("Add");	
+	makeOval(215, 139, 157, 153);
+	Roi.setStrokeColor("red");
+	roiManager("Add");
 	
-	// Get user input
-	Dialog.create("ROI Overlap count");
-	Dialog.addNumber("Reference channel", 1);
-	Dialog.addNumber("Object channel", 2);
-	Dialog.show();
-	b = Dialog.getNumber();
-	a = Dialog.getNumber();
-	
+	Stack.setChannel(2);
+	makeOval(95, 56, 10, 12);
+	Roi.setStrokeColor("green");
+	roiManager("Add");
+	makeOval(118, 77, 14, 13);
+	Roi.setStrokeColor("green");
+	roiManager("Add");
+	makeOval(67, 112, 13, 8);
+	Roi.setStrokeColor("green");
+	roiManager("Add");
+	makeOval(95, 127, 12, 14);
+	Roi.setStrokeColor("green");
+	roiManager("Add");
+	makeOval(126, 119, 21, 18);
+	Roi.setStrokeColor("green");
+	roiManager("Add");
+	makeOval(288, 161, 17, 18);
+	Roi.setStrokeColor("green");
+	roiManager("Add");
+	makeOval(317, 197, 13, 14);
+	Roi.setStrokeColor("green");
+	roiManager("Add");
+	makeOval(257, 203, 10, 11);
+	Roi.setStrokeColor("green");
+	roiManager("Add");
+	makeOval(271, 240, 16, 14);
+	Roi.setStrokeColor("green");
+	roiManager("Add");
+	roiManager("Show All");
 	setBatchMode(true);	
-	ra = getRoiInChannel(a);
-	rb = getRoiInChannel(b);	
-	counts = countRoiOverlap(b, a);
+	ra = getRoiInChannel(1);
+	rb = getRoiInChannel(2);
+	counts = countRoiOverlap(ra, rb);
 	setBatchMode(false);
-	
 	// save the distance in the results table	
-	for (i = 0; i  < rb.length; i++) {
-		roiManager("select", rb[i]);
-		setResult("ROI Index", i, rb[i]);
+	for (i = 0; i  < ra.length; i++) {
+		roiManager("select", ra[i]);
+		setResult("ROI Index", i, ra[i]);
 		setResult("ROI Name", i, Roi.getName);
 		setResult("Number", i, counts[i]);
 	}
-	updateResults();
-}
-
-
-function createTest() {
-	newImage("HyperStack", "8-bit color-mode", 400, 300, 2, 1, 1);
-	makeOval(44, 38, 133, 143);
-	roiManager("Add");
-	makeOval(215, 139, 157, 153);
-	roiManager("Add");
-	Stack.setChannel(2);
-	makeOval(95, 56, 10, 12);
-	roiManager("Add");
-	makeOval(118, 77, 14, 13);
-	roiManager("Add");
-	makeOval(67, 112, 13, 8);
-	roiManager("Add");
-	makeOval(95, 127, 12, 14);
-	roiManager("Add");
-	makeOval(126, 119, 21, 18);
-	roiManager("Add");
-	makeOval(288, 161, 17, 18);
-	roiManager("Add");
-	makeOval(317, 197, 13, 14);
-	roiManager("Add");
-	makeOval(257, 203, 10, 11);
-	roiManager("Add");
-	makeOval(271, 240, 16, 14);
-	roiManager("Add");
-	roiManager("Show All");
+	updateResults();	
+	if (counts[0]==5 && counts[1]==4) {
+		print("test ok");
+	} else {
+		print("test failed (count is incorrect)");
+	}
 }
 
 // counts the number of region "b" in each region "a"
-function countRoiOverlap(a, b) {	
-	ra = getRoiInChannel(a);
-	rb = getRoiInChannel(b);	
+function countRoiOverlap(ra, rb) {		
 	counts = newArray(ra.length);
 	for (i = 0; i < ra.length; i++) {
 		for (j = 0; j < rb.length; j++) {
