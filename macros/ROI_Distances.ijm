@@ -3,92 +3,122 @@
  * The input is an 2D hyper-stack with ROIs already defined 
  * in the ROI Manager. The ROI have the 0000-0000-0000 name pattern.
  * 
- * Jerome Boulanger 2015
+ * Jerome Boulanger 2015 - 2019
  */
 
-macro "Distance to ROI" {
-	
+macro "Distance to ROI" {		
 	if (nImages == 0) {
-		createTest();
+		test();		
+	} else {	
+		// Get user input
+		Dialog.create("ROI Distance");
+		Dialog.addNumber("Reference channel", 1);
+		Dialog.addNumber("Object channel", 2);
+		Dialog.show();
+		a = Dialog.getNumber();
+		b = Dialog.getNumber();
+		
+		setBatchMode(true);	
+		ra = getRoiInChannel(a);
+		rb = getRoiInChannel(b);
+		D = computeRoiDistances(ra, rb);
+		setBatchMode(false);
+		
+		// save the distance in the results table	
+		for (i = 0; i  < D.length; i++) {
+			roiManager("select", rb[i]);		
+			setResult("ROI Index", i, rb[i]);
+			setResult("ROI Name", i, Roi.getName);
+			setResult("Distance", i, D[i]);
+		}
+		updateResults();
 	}
-	
-	// Get user input
-	Dialog.create("ROI Distance");
-	Dialog.addNumber("Reference channel", 1);
-	Dialog.addNumber("Object channel", 2);
-	Dialog.show();
-	b = Dialog.getNumber();
-	a = Dialog.getNumber();
-	
+}
+
+function test() {
+	print("Testing mode");
+	//close windows
+	wins = newArray("ROI Manager","Results");
+	for (i = 0; i<wins.length;i++) {
+		if (isOpen(wins[i])) {
+			selectWindow(wins[i]);
+			run("Close");
+		}
+	}
+	// create the test example rois
+	newImage("Test Image", "8-bit color-mode", 400, 300, 2, 1, 1);
+	Stack.setChannel(1);	
+	setTool("oval");
+	makeOval(102, 84, 136, 147);
+	Roi.setStrokeColor("red");
+	roiManager("Add");
+	makeOval(50, 84, 136, 147);
+	Roi.setStrokeColor("red");
+	roiManager("Add");
+	Stack.setChannel(2);	
+	makeOval(256, 43, 83, 90);
+	Roi.setStrokeColor("green");
+	roiManager("Add");
+	makeOval(81, 64, 80, 78);
+	Roi.setStrokeColor("green");
+	roiManager("Add");
+	makeOval(233, 186, 82, 84);
+	Roi.setStrokeColor("green");	
+	roiManager("Add");
+	roiManager("Show all");	
+	// compute distances 
 	setBatchMode(true);	
-	ra = getRoiInChannel(a);
-	rb = getRoiInChannel(b);
-	D = computeRoiDistances(a, ra, b, rb);
+	ra = getRoiInChannel(1);
+	rb = getRoiInChannel(2);
+	D = computeRoiDistances(ra, rb);
 	setBatchMode(false);
-	
 	// save the distance in the results table	
 	for (i = 0; i  < D.length; i++) {
-		roiManager("select", ra[i]);		
-		setResult("ROI Index", i, ra[i]);
+		roiManager("select", rb[i]);		
+		setResult("ROI Index", i, rb[i]);
 		setResult("ROI Name", i, Roi.getName);
 		setResult("Distance", i, D[i]);
 	}
-	updateResults();	
-}
-
-function createTest() {
-	newImage("HyperStack", "8-bit color-mode", 400, 300, 2, 1, 1);
-	Stack.setChannel(1);
-	setTool("oval");
-	makeOval(102, 84, 136, 147);		
-	roiManager("Add");
-	makeOval(50, 84, 136, 147);		
-	roiManager("Add");
-	Stack.setChannel(2);
-	makeOval(256, 43, 83, 90);
-	roiManager("Add");
-	makeOval(81, 64, 80, 78);
-	roiManager("Add");
-	makeOval(233, 186, 82, 84);
-	roiManager("Add");
+	updateResults();
+	if (D[0]==34 && D[1] == 0 && D[2]==15) {
+		print("Test ok");
+	} else {
+		print("Test failed (incorrect distances)");
+	}
 }
 
 // Compute the distance for ROI in Channels a to ROI channel b
-function computeRoiDistances(a, ra, b, rb) {
+function computeRoiDistances(ra, rb) {
 	
 	// Compute the distance map to all ROIs in b
-	computeRoiDistanceMap(rb);
-	map_id = getImageID();
-		
-	// Move the ROI in a to b to be able to perform measurements	
-	moveRoiToChannel(ra, b);
+	map_id = computeRoiDistanceMap(ra);	
 	
 	// Measure the distances as the min of the distance map
-	D = newArray(ra.length);
-	for (i = 0; i < ra.length; i++) {
-  		roiManager("select", ra[i]);
+	D = newArray(rb.length);
+	for (i = 0; i < rb.length; i++) {		
+  		roiManager("select", rb[i]);  		
       	List.setMeasurements;
       	D[i] = List.getValue("Min");      
 	}
 	selectImage(map_id);
 	close();
 	
-	// Move back the ROI the original channel	
-	moveRoiToChannel(ra, a);
 	return D;
 }
 
 // compute distance map for all ROI in channel c
 function computeRoiDistanceMap(rois) {
 	getDimensions(nx, ny, nc, nz, nt);
-	newImage("HyperStack", "8-bit color-mode", nx, ny, nc, nz, nt);	
-	setColor(255);
+	newImage("Distance map", "32-bit color-mode", nx, ny, 1, nz, nt);	
+	setColor(128);
 	for (i = 0; i < rois.length; i++) {
 		roiManager("select", rois[i]);
 		fill();
 	}
-	run("Convert to Mask", "method=Default background=Dark calculate");
+	setThreshold(0, 10);
+	run("Convert to Mask", "method=Default background=Dark black");
 	run("Distance Map", "slice");
+	return getImageID();
 }
 
 // Move the ROIs to channel by renaming the prefix 000x-
