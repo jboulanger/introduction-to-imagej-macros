@@ -157,3 +157,12 @@ pythontex-files-*/
 
 # Latexian
 TSWLatexianTemp*
+
+*.pdf
+*#
+.#*
+*~
+*.zip
+*.tif
+*.TIF
+data/*/*.txt
