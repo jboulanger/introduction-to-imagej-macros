@@ -15,5 +15,6 @@ for (s = 0; s < seriesCount; s++) {
   print("Focal plane count = " + sizeZ);
   print("Channel count = " + sizeC);
   print("Time point count = " + sizeT);
+  run("Bio-Formats Importer", "open=["+id+"] color_mode=Composite rois_import=[ROI manager] view=Hyperstack stack_order=XYCZT series_"+(s-1)+"";
 }
 Ext.close();
