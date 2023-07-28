@@ -1,9 +1,7 @@
 // Example - Loops & array
 
-// Hi Guys - great the team
-macro "Hi guys!" {
-	team = newArray("Mathias", "Jon", "Nick");
-	for (i = 0; i < team.length; i++) {
-		print("Hi " + team[i] + "!");
-	}
+array = newArray(10);
+for (i = 0; i < array.length; i++) {
+	array[i] = i * i;
 }
+Array.print(array);

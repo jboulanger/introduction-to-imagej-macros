@@ -1,6 +1,5 @@
 // Example - Batch processing
 
-print("\\Clear")
 folder = getDirectory("Choose a folder");
 list = getFileList(folder);
 processFolder(folder, list);

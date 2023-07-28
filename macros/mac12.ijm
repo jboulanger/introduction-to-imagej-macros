@@ -1,9 +1,5 @@
 // Example - Append a string to a filename
 
-input = "3D_Stack.TIF";
-output = appendToFilename(input, "_deconv");
-print("Input: " + input + "\nOutput: " + output);
-
 // append str before the extension of filename
 function appendToFilename(filename, str) {
 	i = lastIndexOf(filename, '.');
@@ -15,3 +11,7 @@ function appendToFilename(filename, str) {
 		return filename + str
 	}
 }
+
+input = "3D_Stack.TIF";
+output = appendToFilename(input, "_deconv");
+print("Input: " + input + "\nOutput: " + output);

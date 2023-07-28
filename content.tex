@@ -1,6 +1,3 @@
-%\documentclass[9pt,twocolumn,colorlinks=true,linkcolor=black,urlcolor=skyblue1,a4paper]{scrartcl}
-%\usepackage{beamerarticle}
-%\documentclass[ignorenonframetext]{beamer}
 \usepackage{xltxtra}
 \usepackage{amssymb, amsmath, mathtools, amsthm}
 \usepackage{fontspec}
@@ -83,18 +80,18 @@
 \section{Introduction}
 \begin{frame}
   \frametitle<presentation>{Introduction}
-  The aim of this \only<presentation>{lecture}\only<article>{document} is to
+  The objectives of this \only<presentation>{lecture}\only<article>{document} is to
   \begin{itemize}
-  \item become more familiar with programming
-  \item be able to automatize repetitive tasks
-  \item learn how to batch process files
-  \item enable more quantitative analysis of micoscopy images.
+    \item be able to automatize repetitive tasks,
+    \item enable more quantitative analysis of micoscopy images,
+    \item create reproducible workflows,
+    \item become more familiar with programming.
   \end{itemize}
   Where to get help?
   \begin{itemize}
-  \item \url{http://imagej.nih.gov}
-  \item \url{http://fiji.sc}
-  \item \url{http://cmci.embl.de/documents/ijcourses}
+    \item \url{http://imagej.nih.gov}
+    \item \url{http://fiji.sc}
+    \item \url{https://forum.image.sc/}
   \end{itemize}
 \end{frame}
 
@@ -106,15 +103,15 @@ of this page.
 \begin{frame}
   \frametitle{But why the ImageJ macro language?}
   \begin{itemize}
-  \item ImageJ is a widespread tool in the community.
-  \item Macro language allows you to go beyond the clicking around.
-  \item Even if in the future you don't use ImageJ macro programming
-    language you will learn some basic programming techniques.
-  \item The macro language do not require a full knowledge of the
-    underlying ImageJ code (classes).
-  \item You may decide to continue later to script using Python,
+    \item ImageJ is a widespread tool in the community.
+    \item The ImageJ 1 Macro language do not require a full knowledge of the
+    underlying ImageJ code (API).
+    \item Macro language allows you to go beyond clicking around.
+    \item You may decide to continue later to script using Python,
     BeanShell, Clojure or Javascript to be able to perform more
     advanced scripts.
+    \item Even if in the future you don't use ImageJ macro programming
+    language you will learn some basic programming techniques.
   \end{itemize}
 \end{frame}
 
@@ -123,22 +120,23 @@ of this page.
 \begin{frame}[fragile]
   \frametitle<presentation>{Macro basics}
   \begin{itemize}
-  \item A \kw{macro} is a set of instruction that can be interpreted
+    \item A \kw{script} is a set of instruction that can be interpreted
     by the the ImageJ macro interpreter (like in Python \& Basic unlike
     C or Java).
-  \item It is stored in a text file (.ijm) (not a MS Word document).
-  \item A file can contain several macros and define a toolset.
-  \item \kw{Instructions} are terminated by a semi colon ``;'' and can
-    be grouped inside a pair of curly braces.
-  \item Instruction starting with \verb$//$ or between \verb$/* */$
-    are \kw{comments} (not interpreted).
-  \item You can create and edit macros from the macro editor
-    \menu{File > New > Script} or press \keys{\{}).
-  \item To be able to install a macro you need to use the syntax:
-    \begin{minipage}{5cm}
-      \verb$   macro "name [shortcut]" { instructions; } $
-    \end{minipage}
-  \item You can discard this syntax for testing quickly pieces of code.
+    \item A \kw{macro} is a script which has been recorded
+    \item It is stored in a text file (.ijm) (not a MS Word document).
+    \item A file can contain several macros and define a toolset.
+    \item \kw{Instructions} are terminated by a semi colon ``;'' and can
+      be grouped inside a pair of curly braces.
+    \item Instruction starting with \verb$//$ or between \verb$/* */$
+      are \kw{comments} (not interpreted).
+    \item You can create and edit macros from the macro editor
+      \menu{File > New > Script} or press \keys{[}).
+    \item To be able to install a macro you need to use the syntax:
+      \begin{minipage}{5cm}
+        \verb$   macro "name [shortcut]" { instructions; } $
+      \end{minipage}
+    \item You can discard this syntax for testing quickly pieces of code.
 \end{itemize}
 \end{frame}
 
@@ -158,20 +156,21 @@ of this page.
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle<presentation>{Keep it tidy!}
+  \frametitle<presentation>{Best practices}
   \begin{itemize}
-  \item Obviously you don't need the code to look pretty to be
+  \item Code does not need to look pretty to be
     functional and this code can be executed:\par
     \lstinputlisting[firstline=3]{macros/mac2.ijm}
-  \item But for your own sake (in 3 month you'll have forgotten what it does), use:
+  \item but for your own sake (in 3 month you'll have forgotten what it does),
+    and for other people to be able to use your code (reproducibility), try to for example:
     \begin{itemize}
-    \item spaces around variables : \verb?i = i + 10? instead of \verb?i=i+10?.
-    \item space after a comma \verb?z = doSomething(x, y)?
-    \item increment the tabulation number after opening a curly braces \verb?{?
-    \item split the code into reusable blocks.
-    \item use consistent and explicit names for variables and functions
-    \item use the lowerCamelCase function naming convention (as used by the IJ macro language).
-    \item document the code using  \textcolor{green!50!black}{/*comments*/}.
+      \item document the code using  \textcolor{green!50!black}{/*comments*/}.
+      \item split the code into reusable blocks.
+      \item increment the tabulation number after opening a curly braces \verb?{?
+      \item spaces around variables : \verb?i = i + 10? instead of \verb?i=i+10?.
+      \item space after a comma \verb?z = doSomething(x, y)?
+      \item use consistent and explicit names for variables and functions
+      \item use the lowerCamelCase function naming convention.
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -185,12 +184,13 @@ of this page.
     \begin{enumerate}
     \item Open the sample blobs.gif \menu{File > Open Sample > Blobs [25K]}
     \item Duplicate the image \menu{Image > Duplicate}
-    \item Apply a median filter to the new image \menu{Process > Filters > Median \dots} with radius 2.
+    \item Apply a median filter to the new image \menu{Process > Filters > Median\dots} with radius 2.
     \item Threshold this image using the auto-threshold \menu{Image > Adjust > Auto threshold}
     \item Apply a watershed to split regions \menu{Process > Binary > Watershed}
-    \item Define some regions using \menu{Analyse > Analyse Particles} and tick the add to ROI manager box.
-    \item Close the mask window (blobs-1.gif) and select the original one.
-    \item Un-select \& re-select ``View all'' in the ROI manager and click Measure.
+    \item Define some regions using \menu{Analyze > Analyse Particles\dots} and tick the add to ROI manager box.
+    \item Close the mask window (blobs-1.gif)
+    \item Set the measurments in \menu{Analyze > Set Measurements\dots}
+    \item On the ROI Manager select \menu{Measure}
     \end{enumerate}
   \end{itemize}
 \end{frame}
@@ -198,12 +198,12 @@ of this page.
 \begin{frame}[fragile]
   \frametitle<presentation>{Macro recorder}
   \begin{itemize}
-  \item By clicking on \keys{Create} button, we obtain the following
+    \item By clicking on \keys{Create} button, we obtain the following
     macro:\par
     \lstinputlisting[firstline=3]{macros/mac3.ijm}
-  \item Identify the 4 functions used in this code.
-  \item How can we make this code more general in order to apply it to
-    another image?
+    \item How many instruction are there in the macro?
+    \item How can we make this code more general in order to apply it to
+      another image?
   \end{itemize}
 \end{frame}
 
@@ -237,7 +237,54 @@ Javascript.
   \end{block}
 \end{frame}
 
+ \begin{frame}
+   \frametitle<presentation>{Truth tables}
+   \begin{center}
+    \begin{tabular}{ccccccc}
+        &   & not & and & or & xor \\
+      A & B & !A &  A \&\& B & A || B & (A||B)\&\& !(A\&\&B) \\ \hline
+      0 & 0 & 1  & 0 & 0 & 0 \\
+      0 & 1 & 1  & 0 & 1 & 1 \\
+      1 & 0 & 0  & 0 & 1 & 1 \\
+      1 & 1 & 0  & 1 & 1 & 0 \\
+    \end{tabular}
+  \end{center}
+
+  \begin{center}
+   \begin{tikzpicture}[scale=0.5]
+
+    \begin{scope}[shift={(0,0)}]
+     \draw (0,0) circle(1) node {A} ++(1.3,0) circle(1) node {B};
+     \begin{scope}
+      \clip (0,0) circle(1);
+      \draw[black,fill=orange] (1.3,0) circle(1);
+     \end{scope}
+     \node at (0.9,-1.5) {and};
+    \end{scope}
+
+    \begin{scope}[shift={(5,0)}]
+      \draw[black,fill=orange] (0,0) circle(1) node[white,shift={(-0.07,0)}] {A} ++(1.3,0) circle(1) node[white,shift={(+0.07,0)}] {B};
+      \node at (0.9,-1.5) {or};
+    \end{scope}
+
+    \begin{scope}[shift={(10,0)}]
+      \fill[even odd rule,orange] (0,0) circle (1) ++(1.3,0) circle (1);
+      \draw[black] (0,0) circle(1) node[white,shift={(-0.07,0)}]  {A} ++(1.3,0) circle(1) node[white,shift={(0.07,0)}]  {B};
+      \node at (0.9,-1.5) {xor};
+    \end{scope}
+
+   \end{tikzpicture}
+  \end{center}
+
+  \begin{itemize}
+    \item !(A \&\& B) = !A || ! B
+    \item !(A || B) = !A \&\& !B
+  \end{itemize}
+
+ \end{frame}
+
 \begin{frame}
+  \frametitle<presentation>{Operations}
   \begin{example}[Operations on number \& boolean.]~\par
     \lstinputlisting[firstline=3]{macros/mac4.ijm}
   \end{example}
@@ -295,8 +342,7 @@ do {
 } while (condition);
     \end{verbatim}
     \end{enumerate}
-  \item The syntax \code{i++;} is equivalent to \code{i = i + 1;} and
-    allows to increment a variable by 1.
+  \item The syntax \code{i++;} is equivalent to \code{i = i + 1;}
   \end{itemize}
 \end{frame}
 
@@ -352,9 +398,9 @@ do {
 \begin{frame}
   \begin{example}[Loops \& arrays]~\par
     \begin{itemize}
-    \item  In this example, we use a loop over an array of strings.
+    \item  In this example, we use a loop to store the square of number in an array:
       \lstinputlisting[firstline=3]{macros/mac7.ijm}
-    \item Modify this example to greet the team in alphabetical order.
+    \item Create a macro to sort a list of randomly generated numbers.
     \end{itemize}
   \end{example}
 \end{frame}
@@ -382,7 +428,8 @@ function functionName (parameters1, parameter2) {
 
 \begin{frame}
   \begin{example}[Function]~\par
-    Let's modify the previous example with a ``greet'' function:\par
+    Let's code a function that add 1 to a number and another function that add 1
+    to each elements of an array: \par
     \lstinputlisting[firstline=3]{macros/mac8.ijm}
   \end{example}
 \end{frame}
@@ -391,9 +438,8 @@ function functionName (parameters1, parameter2) {
   \begin{example}[Median value]~\par
     \begin{itemize}
     \item Let's now define a function computing the median value of an array.\par
-      \lstinputlisting[firstline=3]{macros/mac9.ijm}
-    \item Write an example to test this function (create an array and print its median value).
-    \item Observe the difference between the two version of the median function.
+      \lstinputlisting[firstline=3,lastline=12]{macros/mac9.ijm}
+    \item Write an example to test this function on an array of random numbers.
     \end{itemize}
 
   \end{example}
@@ -405,8 +451,8 @@ function functionName (parameters1, parameter2) {
     \item In this example, we define a function going through the pixel
       values of the image and fill an array.
     \item An array is 1D (one index) while the image has at least 2D
-      (two indexes), we then have to unroll the pixels in 1D.
-      \lstinputlisting[firstline=3]{macros/mac10.ijm}
+      (two indices), we then have to unroll the pixels in 1D.
+      \lstinputlisting[firstline=3,lastline=12]{macros/mac10.ijm}
     \item We can note already the two functions \code{getHeight} and
       \code{getWidth} used to get the image dimensions as well as the
       function \code{getPixel(x, y)} to read the pixel value.
@@ -417,6 +463,10 @@ function functionName (parameters1, parameter2) {
 \end{frame}
 
 \section{Strings}
+
+Strings are useful for manipulating file names, titles of windows and printing
+informative messages.
+
 \subsection{Definition}
 \begin{frame}[fragile]
   \frametitle<presentation>{String}
@@ -434,6 +484,9 @@ function functionName (parameters1, parameter2) {
 \end{frame}
 
 \subsection{Formating \& Printing}
+
+Several functions are useful for formating strings.
+
 \begin{frame}[fragile]
   \frametitle<presentation>{Formating}
   \begin{itemize}
@@ -456,19 +509,23 @@ function functionName (parameters1, parameter2) {
 \end{frame}
 
 \subsection{Operations}
+
+Operation on strings enable to append, extract and test the content of strings.
+
 \begin{frame}
   \frametitle<presentation>{String manipulation}
   \begin{itemize}
-  \item Extract a substring using \code{substring(string, index1,
-      index2)}. The indexes are between \code{0} and
-    \code{lengthOf(string)} and the resulting string is between
-    \code{index1} and \code{index2-1}.
-  \item \code{indexOf(string, substring)} and
-    \code{lastIndexOf(string, substring)} return the index where the
-    substring appears first and respectively last in the string.
-  \item \code{startsWith(string, prefix)} and \code{endsWith(string,
-      suffix)} test if a string starts / ends with the given prefix or
-    suffix.
+    \item Concatenate two string to each other using the \code{+} operator.
+    \item Extract a substring using \code{substring(string, index1,
+        index2)}. The indices are between \code{0} and
+      \code{lengthOf(string)} and the resulting string is between
+      \code{index1} and \code{index2-1}.
+    \item \code{indexOf(string, substring)} and
+      \code{lastIndexOf(string, substring)} return the index where the
+      substring appears first and respectively last in the string.
+    \item \code{startsWith(string, prefix)} and \code{endsWith(string,
+        suffix)} test if a string starts / ends with the given prefix or
+      suffix.
   \end{itemize}
 \end{frame}
 
@@ -478,7 +535,7 @@ function functionName (parameters1, parameter2) {
     \item In this example, we define a function to append a tag to the
       filename in order for example to create a meaningfull output
       filename.~\par
-      \lstinputlisting[firstline=3]{macros/mac12.ijm}
+      \lstinputlisting[firstline=3,lastline=14]{macros/mac12.ijm}
     \end{itemize}
   \end{example}
 \end{frame}
@@ -487,8 +544,8 @@ function functionName (parameters1, parameter2) {
   \begin{example}[Path name manipulation]~\par
     \begin{itemize}
     \item Let's define two functions returning the basename and the
-      dirname of a path.~\par
-      \lstinputlisting[firstline=3]{macros/mac13.ijm}
+      dirname of a path (see File.getName(path)).~\par
+      \lstinputlisting[firstline=3,lastline=14]{macros/mac13.ijm}
     \end{itemize}
   \end{example}
 \end{frame}
@@ -522,7 +579,7 @@ function functionName (parameters1, parameter2) {
     \begin{itemize}
     \item In this example, we define a function to keep only elements
       in an array matching a certain pattern.\par
-      \lstinputlisting[firstline=3]{macros/mac14.ijm}
+      \lstinputlisting[firstline=3,lastline=13]{macros/mac14.ijm}
     \item Modify this code to keep only the first time point.
     \end{itemize}
   \end{example}
@@ -578,7 +635,7 @@ function functionName (parameters1, parameter2) {
     \item Modify the macro mac3.ijm to add 3 parameters (filename, radius,
       object area) using the 1st and 2nd approach.
     \end{itemize}
-    \lstinputlisting[firstline=3]{macros/mac19.ijm}
+    \lstinputlisting{macros/mac19.ijm}
   \end{example}
 \end{frame}
 
@@ -678,7 +735,7 @@ Reference information on files is located
 \begin{frame}[fragile]
   \frametitle<presentation>{Stacks}
   \begin{itemize}
-  \item Indexes for z (slices), c (channels) and t (frames) start at \kw{1}.
+  \item Indices for z (slices), c (channels) and t (frames) start at \kw{1}.
   \item \code{N = nSlices();} returns the total number of planes.
   \item \code{setSlice(n);} sets the cursor at slice \code{n}.
   \item A loop on Z-planes is then:\par
@@ -714,18 +771,19 @@ Reference information on ROI is located
      labels", "Show all without labels" or "Remove Slice Info".
    \item The ROI manager runs faster in batch mode. In a macro start
      by closing the Roi Manager:
-     \lstinputlisting{macros/mac24.ijm}
+     \lstinputlisting[firstline=3]{macros/mac24.ijm}
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle<presentation>{ROI selection}
   \begin{itemize}
-  \item The number of ROI is given by \code{N = roiManager("count");}
-  \item the index of the current ROI is given by \code{index = roiManager("index");}
-  \item you can select several ROI using \code{roiManager("select", indexes);} where indexes is an array.
-     \item Indexes are between 0 and N.
-     \item For example to loop over the ROI and print their type, we
+    \item The number of ROI is given by \code{N = roiManager("count");}
+    \item the index of the current ROI is given by \code{index = roiManager("index");}
+    \item you can select several ROI using \code{roiManager("select", indices);} where indices is an array.
+    \item Indices are between 0 and N.
+    \item A good idea for function creating ROIs is to return an array of the ROIs.
+    \item For example to loop over the ROI and print their type, we
        can use the following macro:\par
        \lstinputlisting[firstline=3]{macros/mac25.ijm}
   \end{itemize}
@@ -741,9 +799,8 @@ Reference information on ROI is located
       Measurements} dialog.
   \item Using a macro, you can define quantities for the ROIs that are not
     available from the standard measurement.
-  \item A good idea is to use \code{List.setMeasurements} and
-    \code{List.getValue();} that can achieve more than the
-    \code{getStatistics(area, mean, min, max, std, histogram)} function (\href{http://rsb.info.nih.gov/ij/developer/macro/functions.html#getStatistics}{ref}).
+  \item You can use \code{getValue()} to access measurements using the names
+    of the columns of the measurement table.
   \end{itemize}
 \end{frame}
 
@@ -796,115 +853,139 @@ You will find references on overlays
   \end{example}
 \end{frame}
 
-\begin{frame}<presentation>
-  \frametitle{Examples}
+
+\section{Calling another macro}
+
+\begin{frame}
+  \frametitle<presentation>{Calling another macro}
   \begin{itemize}
-  \item Cell velocity
-  \item Deconvolution
-  \item ROIs Overlap analysis
-  \item ROIs distance
-  \item Cell divisions
-  \end{itemize}
+  \item To call another macro we can use \code{runMacro(name, arguments)}
+  \only<article>{\lstinputlisting{macros/mac28.ijm}}
+  \item Arguments is a string that fill be retreived by \code{getArguments()}, that
+    we need to parse manually.
+  \item Here is a generic way to perform this whilst having script parameters:
+  \only<article>{\lstinputlisting{macros/mac29.ijm}}
+  \only<presentation>{\lstinputlisting[firstline=7]{macros/mac29.ijm}}
+\end{itemize}
 \end{frame}
+
+\section{Tables}
+\begin{frame}[fragile]
+  \frametitle<presentation>{Table}
+  \begin{itemize}
+  \item The result table can get populated by error.
+  \item You might need more than one table to store the results.
+  \end{itemize}
+  \only<article>{\lstinputlisting{macros/mac30.ijm}}
+  \only<presentation>{\lstinputlisting[firstline=19,lastline=42]{macros/mac30.ijm}}
+\end{frame}
+
 
 \only<article>{
   \section{Examples}
-  \subsection{Cell velocity}
-  This example relies on many of the previous example encountered
-  along this short tutorial. It aims at segmenting a single cell
-  moving across the field of view and measuring its speed.\par
 
-  \lstinputlisting{macros/Track_Cell.ijm}
+  % \subsection{Cell velocity}
+  % This example relies on many of the previous example encountered
+  % along this short tutorial. It aims at segmenting a single cell
+  % moving across the field of view and measuring its speed.\par
 
-  One possible extention to this example would be to compute the mean
-  squared displacement $<d^2(t)>$ from the track and estimate the
-  persistence time $P$ using the F\"urth formula in 2D given by:
-  $$<d^2(\tau)> = 4D \left(\tau-P\left(1-e^{-\tau/P}\right)\right)$$
-  where $t$ is the lag-time and $D$ the diffusion coefficient. The
-  mean squared displacement is computed from the averaged squared
-  distance of between point located at time $t$ and and $t+\tau$ for
-  all time point $t$.
-  \subsection{Deconvolution}
-  In this example, we implement the Gold deconvolution algorithm. It
-  is an iterative algorithm which at each iteration $k$ from an input
-  image $f$ estimates the deblured image $u_k$ as:
-  $$ u_k = u_{k-1} \cdot \frac{f}{h \ast u_{k-1}} $$
-  where $h \ast u_{k-1}$ represent the bluring of the image
-  $u_{k-1}$. The algorithm can be then decomposed as:
-  \begin{enumerate}
-  \item compute $h \ast u_{k-1}$ as a new image
-  \item divide $f$ by the result of the previous operation as a new image
-  \item multiply the previous estimtate by this ratio
-  \item close the ratio image
-  \item go to step 1
-  \end{enumerate}
-  In this example we also illustrate the \code{appendToFilename()}
-  function we have seen before. We can test this macro using a sample image such as \par
- \lstinputlisting{macros/Gold_Deblur3D.ijm}
- \subsection{ROIs Overlap analysis}
- In this example, we count the number of regions in one channel
- which are contained in region defined in another channel:
+  % \lstinputlisting{macros/Track_Cell.ijm}
+
+  % One possible extention to this example would be to compute the mean
+  % squared displacement $<d^2(t)>$ from the track and estimate the
+  % persistence time $P$ using the F\"urth formula in 2D given by:
+  % $$<d^2(\tau)> = 4D \left(\tau-P\left(1-e^{-\tau/P}\right)\right)$$
+  % where $t$ is the lag-time and $D$ the diffusion coefficient. The
+  % mean squared displacement is computed from the averaged squared
+  % distance of between point located at time $t$ and and $t+\tau$ for
+  % all time point $t$.
+
+%   \subsection{Deconvolution}
+%   In this example, we implement the Gold deconvolution algorithm. It
+%   is an iterative algorithm which at each iteration $k$ from an input
+%   image $f$ estimates the deblured image $u_k$ as:
+%   $$ u_k = u_{k-1} \cdot \frac{f}{h \ast u_{k-1}} $$
+%   where $h \ast u_{k-1}$ represent the bluring of the image
+%   $u_{k-1}$. The algorithm can be then decomposed as:
+%   \begin{enumerate}
+%   \item compute $h \ast u_{k-1}$ as a new image
+%   \item divide $f$ by the result of the previous operation as a new image
+%   \item multiply the previous estimtate by this ratio
+%   \item close the ratio image
+%   \item go to step 1
+%   \end{enumerate}
+%   In this example we also illustrate the \code{appendToFilename()}
+%   function we have seen before. We can test this macro using a sample image such as \par
+%  \lstinputlisting{macros/Gold_Deblur3D.ijm}
+
+ \subsection{Parent - Child relationship}
+
+ In this example, we count create two type of ROI in the ROI Manager. This could
+ be the situation occuring after the segmentation of two independent channels.
+
  \begin{figure}[h]
    \begin{center}
-     \begin{tikzpicture}
-       \draw[red] (0,0) circle (1);
-       \draw[red] (3,1) circle (1.3);
-       \draw[green!75!black] (.5,.5) circle (.1);
-       \draw[green!75!black] (.5,.1) circle (.1);
-       \draw[green!75!black] (.1,.2) circle (.1);
-       \draw[green!75!black] (.75,2) circle (.1);
-       \draw[green!75!black] (3,.5) circle (.1);
-       \draw[green!75!black] (4,.5) circle (.1);
+     \begin{tikzpicture}[very thick]
+       \draw[blue] (0,0) circle (1);
+       \draw[blue] (3,1) circle (1.3);
+       \draw[red!75!black] (.5,.5) circle (.1);
+       \draw[red!75!black] (.5,.1) circle (.1);
+       \draw[red!75!black] (.1,.2) circle (.1);
+       \draw[red!75!black] (.75,2) circle (.1);
+       \draw[red!75!black] (3,.5) circle (.1);
+       \draw[red!75!black] (4,.5) circle (.1);
      \end{tikzpicture}
    \end{center}
  \end{figure}
- The distinction between the two type of ROIs is based on the
- associated channels which is encoded in their name when using
- hyper-stacks.
 
- An extension of this macro could be to measure quantities in the
- green regions and compare the resulting values as a function of their
- localisation inside a red region.
+We start by measuring some quantities for each smaller region and
 
- \lstinputlisting{macros/ROI_Overlap.ijm}
+
+ \lstinputlisting[firstline=15]{macros/ROI_Overlap.ijm}
+
+
  \subsection{ROIs distance}
+
  In this example, we want to compute the distance between each green
  region to the closest red region:
+
  \begin{figure}[h]
    \begin{center}
-     \begin{tikzpicture}
-       \draw[red] (0,0) circle (1);
-       \draw[red] (3,1) rectangle (1.3,2);
-       \draw[green!75!black] (.5,.5) circle (.1);
-       \draw[green!75!black] (.5,1.2) circle (.1);
-       \draw[green!75!black] (-1.1,-1) circle (.1);
-       \draw[green!75!black] (.75,2) circle (.1);
-       \draw[green!75!black] (3,.5) circle (.1);
-       \draw[green!75!black] (4,.5) circle (.1);
+     \begin{tikzpicture}[very thick]
+       \draw[blue] (0,0) circle (1);
+       \draw[blue] (3,1) rectangle (1.3,2);
+       \draw[red!75!black] (.5,.5) circle (.1);
+       \draw[red!75!black] (.5,1.2) circle (.1);
+       \draw[red!75!black] (-1.1,-1) circle (.1);
+       \draw[red!75!black] (.75,2) circle (.1);
+       \draw[red!75!black] (3,.5) circle (.1);
+       \draw[red!75!black] (4,.5) circle (.1);
      \end{tikzpicture}
    \end{center}
  \end{figure}
+
  In order to achieve this, we compute a distance map from the set of
  red regions and compute the minimum value of this distance map in the
- green regions. Again the distinction between the two type of ROIs is
- based on the associated channels which is encoded in their name when
- using hyper-stacks.
+ green regions. Here we can reuse a large portion of the code for overlaps.
 
- \lstinputlisting{macros/ROI_Distances.ijm}
-\subsection{Cell divisions}
-This example contains two macros for the analysis of an image sequence
-monitoring cell division.
+ \lstinputlisting[firstline=15,lastline=50]{macros/ROI_Distance.ijm}
 
-In the macro ``count'', we count the number of cell in file located in
-a folder. We then plot the number of cells versus the time and try to
-estimate a cell division time.
 
-In the macro ``Classify Cells'', the cells are classify according to
-some measurements. A threshold for each measurement is computed and
-the ROI of the cells satisfying all the criterion will be drawn in
-red.
 
-\lstinputlisting{macros/MitoQuant.ijm}
+% \subsection{Cell divisions}
+% This example contains two macros for the analysis of an image sequence
+% monitoring cell division.
+
+% In the macro ``count'', we count the number of cell in file located in
+% a folder. We then plot the number of cells versus the time and try to
+% estimate a cell division time.
+
+% In the macro ``Classify Cells'', the cells are classify according to
+% some measurements. A threshold for each measurement is computed and
+% the ROI of the cells satisfying all the criterion will be drawn in
+% red.
+
+% \lstinputlisting{macros/MitoQuant.ijm}
 
 } % \only<article>
 \end{document}

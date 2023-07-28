@@ -1,17 +1,16 @@
+//@Integer(label="radius") radius
+//@String(label="Threshold", choices={"Default","Otsu"}) threshold
+
 // Example - Using image identifier
 
-segmentCell(3, 5);
-
 // Segment the cell and add regions to ROI manager
-function segmentCell(radius, area) {
-	id = getImageID();
+function segmentBlobs(radius, threshold) {
 	run("Duplicate...", " ");
 	run("Median...", "radius=" + radius);
-	run("Auto Threshold", "method=MaxEntropy white");
-	run("Convert to Mask"); // add this line
+	run("Auto Threshold", "method=" + threshold);
 	run("Watershed");
-	run("Analyze Particles...",
-	  	"size=" + area + "-Infinity add");
+	run("Analyze Particles...", "add");
 	close();
-	selectImage(id); // use image ID to set the focus back
 }
+
+segmentBlobs(radius, threshold);

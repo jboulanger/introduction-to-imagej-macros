@@ -3,12 +3,9 @@
 run("Blobs (25K)");
 run("Duplicate...", " ");
 run("Median...", "radius=2");
-setAutoThreshold("Otsu");
-run("Convert to Mask"); 
+run("Auto Threshold", "method=Default");
 run("Watershed");
-run("Analyze Particles...", "size=5-Infinity add");
+run("Analyze Particles...", "add");
 close();
-selectWindow("blobs.gif");
-roiManager("Show None");
-roiManager("Show All");
+run("Set Measurements...", "area mean redirect=None decimal=9");
 roiManager("Measure");

@@ -10,3 +10,8 @@ function image2Array() {
 	}
 	return A;
 }
+
+print("\\Clear");
+run("Blobs (25K)");
+a = image2Array();
+Array.print(a);

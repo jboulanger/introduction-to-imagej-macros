@@ -1,7 +1,7 @@
 // Example - Loop over ROIs
 
 // Loop over ROI and print their type
-for (n = 0; n < roiManager("count"); n++) {
- 	roiManager("select", n);
- 	print("roi #" + n + " is a " + Roi.getType);
+for (i = 0; i < roiManager("count"); i++) {
+ 	roiManager("select", i);
+ 	print("roi #" + i + " is a " + Roi.getType);
 }
