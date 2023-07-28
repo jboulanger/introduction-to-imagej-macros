@@ -12,7 +12,7 @@ jobs:
       - name: Set up Git repository
         uses: actions/checkout@v2
       - name: Install TeXlive
-        run: sudo apt-get update && sudo apt-get install texlive-latex-extra zip
+        run: sudo apt-get update && sudo apt-get install texlive-latex-extra zip texlive-xetex
       - name: LaTeX compile slides
         run: xelatex slides; xelatex slides;
       - name: LaTeX compile handout
