@@ -12,19 +12,15 @@ jobs:
       - name: Set up Git repository
         uses: actions/checkout@v2
       - name: Install TeXlive
-        run: sudo apt-get update && sudo apt-get install texlive-latex-extra
+        run: sudo apt-get update && sudo apt-get install texlive-latex-extra zip
       - name: LaTeX compile slides
         run: xelatex slides; xelatex slides;
       - name: LaTeX compile handout
         run: xelatex handout; xelatex handout;
       - name: Zip data
-        uses: montudor/action-zip@v1
-        with:
-          args: zip -qq -r data.zip data
-     - name: Zip macros
-        uses: montudor/action-zip@v1
-        with:
-          args: zip -qq -r macros.zip macros
+        run: zip -qq -r data.zip data
+      - name: Zip macros
+        run: zip -qq -r macros.zip macros
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
@@ -32,5 +28,6 @@ jobs:
             files: |
               slides.pdf
               handout.pdf
-              data/
+              data.zip
+              macros.zip
 
