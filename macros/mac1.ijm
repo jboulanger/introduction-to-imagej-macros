@@ -1,5 +1,11 @@
 // Print "Hello World!" in the log window
-// Jerome Boulanger - jeromeb@mrc-lmb.cam.ac.uk
+
 macro "Hello World [g]" {
-    print("Hello World!");
+	message = "Hello World! ";	
+	if (nImages > 0) {
+		message += "There are " + nImages + " images opened.";
+	} else {
+		message += "There are no opened image.";
+	}
+    print(message);
 }

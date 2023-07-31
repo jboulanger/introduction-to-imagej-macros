@@ -72,10 +72,10 @@
   \maketitle
 \end{frame}
 
-\begin{frame}<presentation>
-  \mode<presentation>{\frametitle{Outline}}
-  \tiny \tableofcontents
-\end{frame}
+%\begin{frame}<presentation>
+%  \mode<presentation>{\frametitle{Outline}}
+%  \tiny \tableofcontents
+%\end{frame}
 
 \section{Introduction}
 \begin{frame}
@@ -158,19 +158,16 @@ of this page.
 \begin{frame}[fragile]
   \frametitle<presentation>{Best practices}
   \begin{itemize}
-  \item Code does not need to look pretty to be
+  \item<1-> Code does not need to look pretty to be
     functional and this code can be executed:\par
     \lstinputlisting[firstline=3]{macros/mac2.ijm}
-  \item but for your own sake (in 3 month you'll have forgotten what it does),
-    and for other people to be able to use your code (reproducibility), try to for example:
+  \item<2-> To improve reproduciblilty, reusability and robustness:
     \begin{itemize}
-      \item document the code using  \textcolor{green!50!black}{/*comments*/}.
+      \item document the code using  \textcolor{green!50!black}{/*comments*/} and  \textcolor{green!50!black}{//}
+      \item adapt a consistent formating
       \item split the code into reusable blocks.
-      \item increment the tabulation number after opening a curly braces \verb?{?
-      \item spaces around variables : \verb?i = i + 10? instead of \verb?i=i+10?.
-      \item space after a comma \verb?z = doSomething(x, y)?
-      \item use consistent and explicit names for variables and functions
-      \item use the lowerCamelCase function naming convention.
+      \item include tests on small blocks (unit test) and end to end tests.
+      \item think of a way to share the code and licencing
     \end{itemize}
   \end{itemize}
 \end{frame}
